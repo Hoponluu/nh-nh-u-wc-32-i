@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>World Cup 2026 — Tổng quan giải đấu</title>
     <link rel="icon" type="image/png" href="/Favicon.png">
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-324177027"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-324177027');
+    </script>
     <style>
         /* ============================================
            CSS RESET + VARIABLES
@@ -16,29 +24,29 @@
         }
 
         :root {
-            --bg: #0f0e17;
-            --bg-secondary: #1a1a2e;
-            --surface: #16213e;
-            --surface-hover: #1c2a4a;
-            --surface-alt: #1e2d50;
-            --stroke: #2a3a5c;
-            --stroke-light: #354766;
-            --text-primary: #e8e8f0;
-            --text-secondary: #a0a8c0;
-            --text-tertiary: #6b7490;
-            --green-bg: rgba(16, 185, 129, 0.15);
+            --bg: #f0f4f8;
+            --bg-secondary: #e4eaf2;
+            --surface: #ffffff;
+            --surface-hover: #f0f4f8;
+            --surface-alt: #e8eef6;
+            --stroke: #d0d8e8;
+            --stroke-light: #b8c4d8;
+            --text-primary: #1a2035;
+            --text-secondary: #3d5075;
+            --text-tertiary: #7a8faa;
+            --green-bg: rgba(16, 185, 129, 0.10);
             --green-border: #10b981;
-            --green-text: #34d399;
-            --yellow-bg: rgba(245, 158, 11, 0.12);
-            --yellow-border: #f59e0b;
-            --yellow-text: #fbbf24;
-            --blue: #3b82f6;
-            --indigo: #6366f1;
-            --pink: #ec4899;
-            --purple: #8b5cf6;
-            --orange: #f97316;
-            --gold: #eab308;
-            --red: #ef4444;
+            --green-text: #047857;
+            --yellow-bg: rgba(245, 158, 11, 0.10);
+            --yellow-border: #d97706;
+            --yellow-text: #92400e;
+            --blue: #2563eb;
+            --indigo: #4f46e5;
+            --pink: #db2777;
+            --purple: #7c3aed;
+            --orange: #ea580c;
+            --gold: #b45309;
+            --red: #dc2626;
             --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
             --radius: 10px;
             --radius-sm: 6px;
@@ -75,7 +83,7 @@
             padding: 10px 20px;
             gap: 12px;
             flex-wrap: wrap;
-            background: linear-gradient(135deg, #16213e 0%, #1a1a2e 50%, #0f0e17 100%);
+            background: linear-gradient(135deg, #1e3a6e 0%, #1a2e5a 50%, #152448 100%);
             border-bottom: 1px solid var(--stroke);
         }
 
@@ -775,15 +783,15 @@ const BRACKET_THIRD     = [103];
 
 // Round colors
 const ROUND_TYPE_COLORS = {
-    'R32-A': '#3b82f6',
-    'R32-B': '#10b981',
-    'R32-C': '#f97316',
-    'R32': '#3b82f6',
-    'R16': '#6366f1',
-    'QF': '#ec4899',
-    'SF': '#8b5cf6',
-    'FINAL': '#eab308',
-    '3RD': '#6b7280'
+    'R32-A': '#2563eb',
+    'R32-B': '#059669',
+    'R32-C': '#ea580c',
+    'R32': '#2563eb',
+    'R16': '#4f46e5',
+    'QF': '#db2777',
+    'SF': '#7c3aed',
+    'FINAL': '#b45309',
+    '3RD': '#64748b'
 };
 
 function getRoundColor(match) {
@@ -1205,7 +1213,7 @@ function buildConnectors(fromPositions, toPositions, totalH, side) {
         const y2 = fromPositions[i + 1] + CARD_H / 2;
         const yT = toPositions[targetIdx] + CARD_H / 2;
 
-        const color = 'rgba(100, 120, 160, 0.3)';
+        const color = 'rgba(37, 99, 235, 0.3)';
 
         if (side === 'left') {
             paths += '<path d="M 0 ' + y1 + ' H ' + (w / 2) + '" stroke="' + color + '" stroke-width="1.5" fill="none"/>';
@@ -1225,7 +1233,7 @@ function buildConnectors(fromPositions, toPositions, totalH, side) {
 
 function buildSFtoFinalConnector(sfCenter, finalCenter, totalH, side) {
     const w = 28;
-    const color = 'rgba(234, 179, 8, 0.4)';
+    const color = 'rgba(180, 83, 9, 0.5)';
 
     let path;
     if (side === 'left') {
