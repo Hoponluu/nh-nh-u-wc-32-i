@@ -447,6 +447,27 @@
         .bracket-section {
             overflow-x: auto;
             overflow-y: hidden;
+            /* break out of .main-content max-width */
+            margin-left: calc(-50vw + 50%);
+            margin-right: calc(-50vw + 50%);
+            padding: 0;
+            position: relative;
+        }
+
+        .bracket-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url('/theworldcup.png') center center / cover no-repeat;
+            background-attachment: fixed;
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bracket-section > * {
+            position: relative;
+            z-index: 1;
         }
 
         .bracket-scroll-hint {
@@ -627,8 +648,8 @@
         .card-group-pos {
             font-size: 9px;
             font-weight: 700;
-            color: var(--text-tertiary);
-            background: rgba(42, 58, 92, 0.6);
+            color: #ffffff;
+            background: #3d5075;
             padding: 1px 4px;
             border-radius: 3px;
             flex-shrink: 0;
@@ -656,11 +677,20 @@
             min-width: 185px;
         }
 
+        /* Only the round-label sits above the relative div — no trophy in flow */
         .bracket-center .round-label {
             font-size: 12px;
             background: linear-gradient(135deg, var(--gold), #f59e0b);
             color: #1a1a2e;
             border: none;
+        }
+
+        .trophy-icon {
+            position: absolute;
+            font-size: 28px;
+            width: 100%;
+            text-align: center;
+            pointer-events: none;
         }
 
         .bracket-center .bracket-match-card {
@@ -688,10 +718,6 @@
             border: 1px solid var(--stroke);
         }
 
-        .trophy-icon {
-            font-size: 32px;
-            margin-bottom: 8px;
-        }
 
         /* ============================================
            FOOTER
@@ -1073,10 +1099,12 @@ function renderBracket(bracket) {
     const finalTop = totalH / 2 - CARD_H / 2;
     const thirdTop = finalTop + CARD_H + 40;
 
+    // Trophy sits absolute inside the relative div, above the Final card
+    const trophyTop = finalTop - 36;
     const centerHTML = '<div class="bracket-center">' +
-        '<span class="trophy-icon">&#127942;</span>' +
-        '<span class="round-label">Chung kết</span>' +
+        '<span class="round-label">&#127942; Chung kết</span>' +
         '<div style="position:relative;height:' + totalH + 'px;width:185px;">' +
+        (trophyTop >= 0 ? '<span class="trophy-icon" style="top:' + trophyTop + 'px;">&#127942;</span>' : '') +
         (finalMatch ? renderBracketCard(finalMatch, finalTop, 'center') : '') +
         (thirdMatch ?
             '<div style="position:absolute;top:' + (thirdTop - 18) + 'px;width:100%;text-align:center;">' +
