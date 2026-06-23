@@ -594,6 +594,17 @@
             padding-bottom: 3px;
         }
 
+        .card-group-pos {
+            font-size: 9px;
+            font-weight: 700;
+            color: var(--text-tertiary);
+            background: rgba(42, 58, 92, 0.6);
+            padding: 1px 4px;
+            border-radius: 3px;
+            flex-shrink: 0;
+            letter-spacing: 0.3px;
+        }
+
         /* Connector columns */
         .connector-col {
             width: 28px;
@@ -1134,11 +1145,13 @@ function renderBracketCard(match, top, side) {
         '<div class="card-team-row ' + homeClass + '">' +
         '<span class="card-team-flag">' + homeFlag + '</span>' +
         '<span class="card-team-name' + (homeTBD ? ' tbd' : '') + '">' + escHtml(homeTeam) + '</span>' +
+        (match.homeGroupPos ? '<span class="card-group-pos">' + escHtml(match.homeGroupPos) + '</span>' : '') +
         (hasScore ? '<span class="card-team-score">' + match.homeScore + '</span>' : '') +
         '</div>' +
         '<div class="card-team-row ' + awayClass + '">' +
         '<span class="card-team-flag">' + awayFlag + '</span>' +
         '<span class="card-team-name' + (awayTBD ? ' tbd' : '') + '">' + escHtml(awayTeam) + '</span>' +
+        (match.awayGroupPos ? '<span class="card-group-pos">' + escHtml(match.awayGroupPos) + '</span>' : '') +
         (hasScore ? '<span class="card-team-score">' + match.awayScore + '</span>' : '') +
         '</div>' +
         '</div>' +
