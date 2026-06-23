@@ -56,22 +56,19 @@
            HEADER
            ============================================ */
         .site-header {
-            position: sticky;
-            top: 0;
-            z-index: 100;
             background: var(--bg);
-            border-bottom: 1px solid var(--stroke);
         }
 
         .header-banner {
             width: 100%;
             display: block;
-            max-height: 180px;
-            object-fit: cover;
-            object-position: center;
+            height: auto;
         }
 
         .header-bar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -79,6 +76,7 @@
             gap: 12px;
             flex-wrap: wrap;
             background: linear-gradient(135deg, #16213e 0%, #1a1a2e 50%, #0f0e17 100%);
+            border-bottom: 1px solid var(--stroke);
         }
 
         .header-info {
