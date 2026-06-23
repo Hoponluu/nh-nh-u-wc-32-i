@@ -713,10 +713,14 @@
 // CONSTANTS
 // ============================================
 const CARD_H = 82;
-const GAP = 6;
-const SLOT_H = CARD_H + GAP; // 88
-const HALF_DIVIDER = 24;
+const PAIR_GAP = 8;         // gap between 2 cards in the same feeder pair
+const INTER_PAIR_GAP = 16;  // gap between different pairs within the same half
+const HALF_DIVIDER = 24;    // gap between top group (4) and bottom group (4)
 const CARD_W = 165;
+
+// R32 half height = 4 cards + 3 internal gaps (8 + 16 + 8)
+const R32_HALF_H = 4 * CARD_H + PAIR_GAP + INTER_PAIR_GAP + PAIR_GAP; // 360
+const TOTAL_H = 2 * R32_HALF_H + HALF_DIVIDER; // 744
 
 const BRACKET_LEFT_R32  = [74, 77, 73, 75, 83, 84, 81, 82];
 const BRACKET_LEFT_R16  = [89, 90, 93, 94];
@@ -918,24 +922,84 @@ function renderThirdPlace(thirdPlace) {
 }
 
 // ============================================
+// POSITION COMPUTATION
+// ============================================
+
+// 4-card positions within one half (top or bottom)
+// gaps: [PAIR_GAP, INTER_PAIR_GAP, PAIR_GAP] = [8, 16, 8]
+function r32HalfPositions(halfBase) {
+    return [
+        halfBase,
+        halfBase + CARD_H + PAIR_GAP,
+        halfBase + 2 * CARD_H + PAIR_GAP + INTER_PAIR_GAP,
+        halfBase + 3 * CARD_H + 2 * PAIR_GAP + INTER_PAIR_GAP
+    ];
+}
+
+// Center y of a card given its top
+function cardCenter(top) { return top + CARD_H / 2; }
+
+// Top of a card centered between two feeder card tops
+function centeredBetween(topA, topB) {
+    return (cardCenter(topA) + cardCenter(topB)) / 2 - CARD_H / 2;
+}
+
+// Compute all bracket positions from R32 geometry
+function computeAllPositions() {
+    const topBase = 0;
+    const botBase = R32_HALF_H + HALF_DIVIDER;
+
+    const r32 = [...r32HalfPositions(topBase), ...r32HalfPositions(botBase)];
+
+    // R16: each card centered between its feeder pair
+    // feeders: (0,1)→r16[0], (2,3)→r16[1], (4,5)→r16[2], (6,7)→r16[3]
+    const r16 = [
+        centeredBetween(r32[0], r32[1]),
+        centeredBetween(r32[2], r32[3]),
+        centeredBetween(r32[4], r32[5]),
+        centeredBetween(r32[6], r32[7])
+    ];
+
+    // QF: (r16[0],r16[1])→qf[0], (r16[2],r16[3])→qf[1]
+    const qf = [
+        centeredBetween(r16[0], r16[1]),
+        centeredBetween(r16[2], r16[3])
+    ];
+
+    // SF: (qf[0],qf[1])→sf[0]  — should equal TOTAL_H/2 - CARD_H/2
+    const sf = [centeredBetween(qf[0], qf[1])];
+
+    return { r32, r16, qf, sf };
+}
+
+// ============================================
 // BRACKET
 // ============================================
 function renderBracket(bracket) {
     if (!bracket) return '';
 
-    const totalH = 8 * SLOT_H + HALF_DIVIDER; // 728
+    const totalH = TOTAL_H;
+    const pos = computeAllPositions();
 
-    // Build left side
-    const leftR32  = buildRoundCards(BRACKET_LEFT_R32, bracket, 8, totalH, 'left');
-    const leftR16  = buildRoundCards(BRACKET_LEFT_R16, bracket, 4, totalH, 'left');
-    const leftQF   = buildRoundCards(BRACKET_LEFT_QF, bracket, 2, totalH, 'left');
-    const leftSF   = buildRoundCards(BRACKET_LEFT_SF, bracket, 1, totalH, 'left');
+    // Build cards for each round using pre-computed positions
+    function buildSide(matchNums, positions, side) {
+        let html = '';
+        positions.forEach((top, i) => {
+            const m = bracket[String(matchNums[i])];
+            if (m) html += renderBracketCard(m, top, side);
+        });
+        return { html, positions };
+    }
 
-    // Build right side
-    const rightR32 = buildRoundCards(BRACKET_RIGHT_R32, bracket, 8, totalH, 'right');
-    const rightR16 = buildRoundCards(BRACKET_RIGHT_R16, bracket, 4, totalH, 'right');
-    const rightQF  = buildRoundCards(BRACKET_RIGHT_QF, bracket, 2, totalH, 'right');
-    const rightSF  = buildRoundCards(BRACKET_RIGHT_SF, bracket, 1, totalH, 'right');
+    const leftR32  = buildSide(BRACKET_LEFT_R32,  pos.r32, 'left');
+    const leftR16  = buildSide(BRACKET_LEFT_R16,  pos.r16, 'left');
+    const leftQF   = buildSide(BRACKET_LEFT_QF,   pos.qf,  'left');
+    const leftSF   = buildSide(BRACKET_LEFT_SF,   pos.sf,  'left');
+
+    const rightR32 = buildSide(BRACKET_RIGHT_R32, pos.r32, 'right');
+    const rightR16 = buildSide(BRACKET_RIGHT_R16, pos.r16, 'right');
+    const rightQF  = buildSide(BRACKET_RIGHT_QF,  pos.qf,  'right');
+    const rightSF  = buildSide(BRACKET_RIGHT_SF,  pos.sf,  'right');
 
     // Connectors
     const connL_R32_R16 = buildConnectors(leftR32.positions, leftR16.positions, totalH, 'left');
@@ -947,9 +1011,9 @@ function renderBracket(bracket) {
     const connR_QF_SF   = buildConnectors(rightQF.positions, rightSF.positions, totalH, 'right');
 
     // SF to Final connectors (bezier curves)
-    const leftSFCenter = leftSF.positions[0] + CARD_H / 2;
-    const rightSFCenter = rightSF.positions[0] + CARD_H / 2;
-    const finalCenter = totalH / 2;
+    const leftSFCenter  = cardCenter(leftSF.positions[0]);
+    const rightSFCenter = cardCenter(rightSF.positions[0]);
+    const finalCenter   = totalH / 2;
 
     const connL_SF_F = buildSFtoFinalConnector(leftSFCenter, finalCenter, totalH, 'left');
     const connR_SF_F = buildSFtoFinalConnector(rightSFCenter, finalCenter, totalH, 'right');
@@ -1014,61 +1078,6 @@ function renderRoundCol(label, cardsHTML, totalH) {
         '<div class="round-cards" style="position:relative;width:' + CARD_W + 'px;height:' + totalH + 'px;">' +
         cardsHTML +
         '</div></div>';
-}
-
-// ============================================
-// BUILD ROUND CARDS (absolute positioning)
-// ============================================
-function buildRoundCards(matchNums, bracket, count, totalH, side) {
-    // count = number of cards in this round on this side
-    // 8 cards: top 4, divider, bottom 4
-    // 4 cards: top 2, divider, bottom 2
-    // 2 cards: top 1, divider, bottom 1
-    // 1 card: centered
-
-    const positions = [];
-    let html = '';
-
-    if (count === 1) {
-        // Single card - centered
-        const top = totalH / 2 - CARD_H / 2;
-        positions.push(top);
-        const m = bracket[String(matchNums[0])];
-        if (m) html += renderBracketCard(m, top, side);
-    } else {
-        const half = count / 2;
-        // Top half
-        for (let i = 0; i < half; i++) {
-            const top = computeCardTop(i, half, totalH, 'top');
-            positions.push(top);
-            const m = bracket[String(matchNums[i])];
-            if (m) html += renderBracketCard(m, top, side);
-        }
-        // Bottom half
-        for (let i = 0; i < half; i++) {
-            const top = computeCardTop(i, half, totalH, 'bottom');
-            positions.push(top);
-            const m = bracket[String(matchNums[half + i])];
-            if (m) html += renderBracketCard(m, top, side);
-        }
-    }
-
-    return { html, positions };
-}
-
-function computeCardTop(index, halfCount, totalH, half) {
-    // Each half occupies (totalH - HALF_DIVIDER) / 2
-    const halfHeight = (totalH - HALF_DIVIDER) / 2;
-    const baseOffset = half === 'top' ? 0 : halfHeight + HALF_DIVIDER;
-
-    if (halfCount === 1) {
-        return baseOffset + halfHeight / 2 - CARD_H / 2;
-    }
-
-    // Distribute cards evenly within their half
-    const totalCardsHeight = halfCount * CARD_H + (halfCount - 1) * GAP;
-    const startY = baseOffset + (halfHeight - totalCardsHeight) / 2;
-    return startY + index * (CARD_H + GAP);
 }
 
 // ============================================
