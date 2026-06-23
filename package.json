@@ -1,0 +1,7 @@
+{
+  "name": "wc2026-public",
+  "private": true,
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0"
+  }
+}

@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Cup 2026 — Tổng quan giải đấu</title>
+    <style>
+        /* ============================================
+           CSS RESET + VARIABLES
+           ============================================ */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #0f0e17;
+            --bg-secondary: #1a1a2e;
+            --surface: #16213e;
+            --surface-hover: #1c2a4a;
+            --surface-alt: #1e2d50;
+            --stroke: #2a3a5c;
+            --stroke-light: #354766;
+            --text-primary: #e8e8f0;
+            --text-secondary: #a0a8c0;
+            --text-tertiary: #6b7490;
+            --green-bg: rgba(16, 185, 129, 0.15);
+            --green-border: #10b981;
+            --green-text: #34d399;
+            --yellow-bg: rgba(245, 158, 11, 0.12);
+            --yellow-border: #f59e0b;
+            --yellow-text: #fbbf24;
+            --blue: #3b82f6;
+            --indigo: #6366f1;
+            --pink: #ec4899;
+            --purple: #8b5cf6;
+            --orange: #f97316;
+            --gold: #eab308;
+            --red: #ef4444;
+            --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --radius: 10px;
+            --radius-sm: 6px;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text-primary);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        /* ============================================
+           HEADER
+           ============================================ */
+        .site-header {
+            background: linear-gradient(135deg, #16213e 0%, #1a1a2e 50%, #0f0e17 100%);
+            border-bottom: 1px solid var(--stroke);
+            padding: 24px 20px 20px;
+            text-align: center;
+        }
+
+        .header-title {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #eab308, #f59e0b, #fbbf24);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+            margin-bottom: 4px;
+        }
+
+        .header-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .header-meta {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .meta-updated {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        .btn-refresh {
+            background: var(--surface);
+            border: 1px solid var(--stroke);
+            color: var(--text-secondary);
+            padding: 6px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-refresh:hover {
+            background: var(--surface-hover);
+            color: var(--text-primary);
+            border-color: var(--stroke-light);
+        }
+
+        .btn-refresh.loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        /* ============================================
+           MAIN LAYOUT
+           ============================================ */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px 16px 60px;
+        }
+
+        .section {
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--stroke);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title-icon {
+            font-size: 20px;
+        }
+
+        /* ============================================
+           LOADING STATE
+           ============================================ */
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 20px;
+            gap: 16px;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--stroke);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .error-container {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--red);
+        }
+
+        /* ============================================
+           GROUP STANDINGS GRID
+           ============================================ */
+        .groups-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        @media (max-width: 1100px) {
+            .groups-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 650px) {
+            .groups-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .group-card {
+            background: var(--surface);
+            border: 1px solid var(--stroke);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .group-card-header {
+            padding: 10px 14px;
+            background: var(--surface-alt);
+            border-bottom: 1px solid var(--stroke);
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .group-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .group-table th {
+            padding: 6px 4px;
+            text-align: center;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--stroke);
+        }
+
+        .group-table th:first-child,
+        .group-table td:first-child {
+            width: 28px;
+            text-align: center;
+        }
+
+        .group-table th:nth-child(2),
+        .group-table td:nth-child(2) {
+            text-align: left;
+            padding-left: 8px;
+        }
+
+        .group-table td {
+            padding: 7px 4px;
+            text-align: center;
+            border-bottom: 1px solid rgba(42, 58, 92, 0.4);
+            color: var(--text-secondary);
+        }
+
+        .group-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .group-table .team-cell {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-align: left;
+        }
+
+        .team-flag {
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .team-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100px;
+        }
+
+        .pos-num {
+            font-weight: 700;
+            font-size: 11px;
+            color: var(--text-tertiary);
+        }
+
+        .col-pts {
+            font-weight: 700;
+            color: var(--text-primary) !important;
+        }
+
+        .col-gd-pos { color: var(--green-text) !important; }
+        .col-gd-neg { color: var(--red) !important; }
+        .col-gd-zero { color: var(--text-tertiary) !important; }
+
+        /* Qualification highlights */
+        .row-qualify td {
+            background: var(--green-bg);
+        }
+
+        .row-qualify .pos-num {
+            color: var(--green-text);
+        }
+
+        .row-third td {
+            background: var(--yellow-bg);
+        }
+
+        .row-third .pos-num {
+            color: var(--yellow-text);
+        }
+
+        /* ============================================
+           THIRD PLACE TABLE
+           ============================================ */
+        .third-place-wrapper {
+            background: var(--surface);
+            border: 1px solid var(--stroke);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .third-place-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--stroke);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .third-place-header-title {
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .third-place-header-sub {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            margin-left: auto;
+        }
+
+        .qualifying-combo {
+            font-size: 12px;
+            color: var(--yellow-text);
+            font-weight: 600;
+            background: var(--yellow-bg);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .third-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .third-table th {
+            padding: 8px 6px;
+            text-align: center;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--stroke);
+        }
+
+        .third-table th:nth-child(2),
+        .third-table td:nth-child(2) {
+            text-align: left;
+            padding-left: 10px;
+        }
+
+        .third-table td {
+            padding: 8px 6px;
+            text-align: center;
+            border-bottom: 1px solid rgba(42, 58, 92, 0.4);
+            color: var(--text-secondary);
+        }
+
+        .third-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .third-table .row-qualify-third td {
+            background: var(--green-bg);
+        }
+
+        .third-table .row-eliminate td {
+            opacity: 0.5;
+        }
+
+        .third-team-cell {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .third-group-badge {
+            font-size: 10px;
+            color: var(--text-tertiary);
+            background: var(--bg);
+            padding: 1px 5px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        /* ============================================
+           BRACKET
+           ============================================ */
+        .bracket-section {
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+
+        .bracket-scroll-hint {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-bottom: 12px;
+            display: none;
+        }
+
+        @media (max-width: 1200px) {
+            .bracket-scroll-hint {
+                display: block;
+            }
+        }
+
+        .bracket-container {
+            position: relative;
+            min-width: 1300px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 16px 0;
+        }
+
+        .bracket-side {
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .bracket-side.right {
+            flex-direction: row-reverse;
+        }
+
+        .bracket-round-col {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .round-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-tertiary);
+            margin-bottom: 10px;
+            padding: 3px 10px;
+            border-radius: 4px;
+            background: var(--surface);
+            border: 1px solid var(--stroke);
+            white-space: nowrap;
+        }
+
+        .round-cards {
+            position: relative;
+        }
+
+        .bracket-match-card {
+            position: absolute;
+            width: 165px;
+            background: var(--surface);
+            border: 1px solid var(--stroke);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+
+        .bracket-match-card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Border side indicators */
+        .bracket-side.left .bracket-match-card {
+            border-left: 3px solid var(--card-accent, var(--blue));
+        }
+
+        .bracket-side.right .bracket-match-card {
+            border-right: 3px solid var(--card-accent, var(--blue));
+        }
+
+        .bracket-center .bracket-match-card {
+            border-left: 3px solid var(--card-accent, var(--gold));
+            border-right: 3px solid var(--card-accent, var(--gold));
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4px 8px;
+            background: rgba(0, 0, 0, 0.2);
+            font-size: 10px;
+            color: var(--text-tertiary);
+        }
+
+        .card-match-num {
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .card-datetime {
+            font-size: 9px;
+        }
+
+        .card-venue {
+            padding: 0 8px 3px;
+            font-size: 9px;
+            color: var(--text-tertiary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-teams {
+            padding: 4px 8px 6px;
+        }
+
+        .card-team-row {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 2px 0;
+        }
+
+        .card-team-row + .card-team-row {
+            border-top: 1px solid rgba(42, 58, 92, 0.3);
+            padding-top: 3px;
+        }
+
+        .card-team-flag {
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+
+        .card-team-name {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-primary);
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-team-name.tbd {
+            color: var(--text-tertiary);
+            font-style: italic;
+        }
+
+        .card-team-score {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+            min-width: 16px;
+            text-align: right;
+        }
+
+        .card-team-row.loser {
+            opacity: 0.4;
+        }
+
+        .card-team-row.winner .card-team-name {
+            color: var(--green-text);
+        }
+
+        .card-penalty {
+            text-align: center;
+            font-size: 9px;
+            color: var(--yellow-text);
+            font-weight: 600;
+            padding-bottom: 3px;
+        }
+
+        /* Connector columns */
+        .connector-col {
+            width: 28px;
+            position: relative;
+        }
+
+        .connector-col svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+
+        /* Center column (Final + 3rd) */
+        .bracket-center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 185px;
+        }
+
+        .bracket-center .round-label {
+            font-size: 12px;
+            background: linear-gradient(135deg, var(--gold), #f59e0b);
+            color: #1a1a2e;
+            border: none;
+        }
+
+        .bracket-center .bracket-match-card {
+            position: relative;
+            width: 175px;
+        }
+
+        .bracket-center .card-3rd .round-label {
+            background: var(--surface);
+            color: var(--text-tertiary);
+            border: 1px solid var(--stroke);
+        }
+
+        .third-place-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-tertiary);
+            margin-top: 16px;
+            margin-bottom: 8px;
+            padding: 3px 10px;
+            border-radius: 4px;
+            background: var(--surface);
+            border: 1px solid var(--stroke);
+        }
+
+        .trophy-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+        .site-footer {
+            text-align: center;
+            padding: 24px 16px;
+            border-top: 1px solid var(--stroke);
+            color: var(--text-tertiary);
+            font-size: 11px;
+        }
+
+        /* ============================================
+           SCROLLBAR STYLING
+           ============================================ */
+        ::-webkit-scrollbar {
+            height: 6px;
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--stroke);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--stroke-light);
+        }
+    </style>
+</head>
+<body>
+
+<header class="site-header">
+    <div class="header-title">World Cup 2026</div>
+    <div class="header-subtitle">Tổng quan giải đấu</div>
+    <div class="header-meta">
+        <span class="meta-updated" id="metaUpdated"></span>
+        <button class="btn-refresh" id="btnRefresh" onclick="refreshData()">
+            <span id="refreshIcon">&#8635;</span> Làm mới
+        </button>
+    </div>
+</header>
+
+<main class="main-content" id="mainContent">
+    <div class="loading-container" id="loadingState">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Đang tải dữ liệu...</div>
+    </div>
+</main>
+
+<footer class="site-footer">
+    FIFA World Cup 2026 &mdash; Dữ liệu được cập nhật tự động
+</footer>
+
+<script>
+// ============================================
+// CONSTANTS
+// ============================================
+const CARD_H = 82;
+const GAP = 6;
+const SLOT_H = CARD_H + GAP; // 88
+const HALF_DIVIDER = 24;
+const CARD_W = 165;
+
+const BRACKET_LEFT_R32  = [74, 77, 73, 75, 83, 84, 81, 82];
+const BRACKET_LEFT_R16  = [89, 90, 93, 94];
+const BRACKET_LEFT_QF   = [97, 98];
+const BRACKET_LEFT_SF   = [101];
+const BRACKET_RIGHT_R32 = [76, 78, 79, 80, 86, 88, 85, 87];
+const BRACKET_RIGHT_R16 = [91, 92, 95, 96];
+const BRACKET_RIGHT_QF  = [99, 100];
+const BRACKET_RIGHT_SF  = [102];
+const BRACKET_FINAL     = [104];
+const BRACKET_THIRD     = [103];
+
+// Round colors
+const ROUND_TYPE_COLORS = {
+    'R32-A': '#3b82f6',
+    'R32-B': '#10b981',
+    'R32-C': '#f97316',
+    'R32': '#3b82f6',
+    'R16': '#6366f1',
+    'QF': '#ec4899',
+    'SF': '#8b5cf6',
+    'FINAL': '#eab308',
+    '3RD': '#6b7280'
+};
+
+function getRoundColor(match) {
+    if (match.round === 'R32' && match.type) {
+        return ROUND_TYPE_COLORS['R32-' + match.type] || ROUND_TYPE_COLORS['R32'];
+    }
+    return ROUND_TYPE_COLORS[match.round] || '#3b82f6';
+}
+
+// ============================================
+// STATE
+// ============================================
+let cachedData = null;
+
+// ============================================
+// DATA FETCHING
+// ============================================
+async function fetchData() {
+    const resp = await fetch('/api/data');
+    if (!resp.ok) throw new Error('Failed to fetch data: ' + resp.status);
+    return await resp.json();
+}
+
+async function loadData() {
+    try {
+        const result = await fetchData();
+        cachedData = result;
+        renderAll(result);
+    } catch (err) {
+        console.error('Load error:', err);
+        document.getElementById('mainContent').innerHTML =
+            '<div class="error-container"><p>Không thể tải dữ liệu. Vui lòng thử lại sau.</p></div>';
+    }
+}
+
+async function refreshData() {
+    const btn = document.getElementById('btnRefresh');
+    btn.classList.add('loading');
+    document.getElementById('refreshIcon').style.animation = 'spin 0.8s linear infinite';
+    try {
+        const result = await fetchData();
+        cachedData = result;
+        renderAll(result);
+    } catch (err) {
+        console.error('Refresh error:', err);
+    } finally {
+        btn.classList.remove('loading');
+        document.getElementById('refreshIcon').style.animation = '';
+    }
+}
+
+// ============================================
+// RENDER ALL
+// ============================================
+function renderAll(result) {
+    const data = result.data;
+    const publishedAt = result.publishedAt;
+
+    // Update timestamp
+    if (publishedAt) {
+        const d = new Date(publishedAt);
+        const formatted = d.toLocaleString('vi-VN', {
+            timeZone: 'Asia/Ho_Chi_Minh',
+            day: '2-digit', month: '2-digit', year: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+        });
+        document.getElementById('metaUpdated').textContent = 'Cập nhật lần cuối: ' + formatted;
+    }
+
+    let html = '';
+    html += renderGroupStandings(data.groups);
+    html += renderThirdPlace(data.thirdPlace);
+    html += renderBracket(data.bracket);
+    document.getElementById('mainContent').innerHTML = html;
+}
+
+// ============================================
+// GROUP STANDINGS
+// ============================================
+function renderGroupStandings(groups) {
+    if (!groups) return '';
+
+    const groupKeys = Object.keys(groups).sort();
+    let cardsHTML = '';
+
+    groupKeys.forEach(key => {
+        const group = groups[key];
+        const standings = group.standings || [];
+
+        let rowsHTML = '';
+        standings.forEach((t, i) => {
+            const rowClass = i < 2 ? 'row-qualify' : (i === 2 ? 'row-third' : '');
+            const gdClass = t.gd > 0 ? 'col-gd-pos' : (t.gd < 0 ? 'col-gd-neg' : 'col-gd-zero');
+            const gdStr = t.gd > 0 ? '+' + t.gd : String(t.gd);
+
+            rowsHTML += '<tr class="' + rowClass + '">' +
+                '<td><span class="pos-num">' + t.pos + '</span></td>' +
+                '<td><div class="team-cell"><span class="team-flag">' + (t.flag || '') + '</span><span class="team-name">' + escHtml(t.name) + '</span></div></td>' +
+                '<td>' + t.mp + '</td>' +
+                '<td>' + t.w + '</td>' +
+                '<td>' + t.d + '</td>' +
+                '<td>' + t.l + '</td>' +
+                '<td>' + t.gf + '</td>' +
+                '<td>' + t.ga + '</td>' +
+                '<td class="' + gdClass + '" style="font-weight:600">' + gdStr + '</td>' +
+                '<td class="col-pts">' + t.pts + '</td>' +
+                '</tr>';
+        });
+
+        cardsHTML += '<div class="group-card">' +
+            '<div class="group-card-header">Bảng ' + escHtml(key) + '</div>' +
+            '<div style="overflow-x:auto;">' +
+            '<table class="group-table">' +
+            '<thead><tr>' +
+            '<th>#</th><th>Đội</th><th>T</th><th>Th</th><th>H</th><th>B</th><th>BT</th><th>BB</th><th>+/-</th><th>Đ</th>' +
+            '</tr></thead>' +
+            '<tbody>' + rowsHTML + '</tbody>' +
+            '</table></div></div>';
+    });
+
+    return '<div class="section">' +
+        '<div class="section-title"><span class="section-title-icon">&#9917;</span> Bảng xếp hạng vòng bảng</div>' +
+        '<div class="groups-grid">' + cardsHTML + '</div></div>';
+}
+
+// ============================================
+// THIRD PLACE
+// ============================================
+function renderThirdPlace(thirdPlace) {
+    if (!thirdPlace || !thirdPlace.teams || thirdPlace.teams.length === 0) return '';
+
+    const teams = thirdPlace.teams;
+    const combo = thirdPlace.qualifyingCombination || '';
+
+    let rowsHTML = '';
+    teams.forEach((t, i) => {
+        const rowClass = t.qualifying ? 'row-qualify-third' : 'row-eliminate';
+        const gdClass = t.gd > 0 ? 'col-gd-pos' : (t.gd < 0 ? 'col-gd-neg' : 'col-gd-zero');
+        const gdStr = t.gd > 0 ? '+' + t.gd : String(t.gd);
+
+        rowsHTML += '<tr class="' + rowClass + '">' +
+            '<td style="font-weight:700;color:var(--text-tertiary);">' + (i + 1) + '</td>' +
+            '<td><div class="third-team-cell">' +
+            '<span class="team-flag">' + (t.flag || '') + '</span>' +
+            '<span class="team-name">' + escHtml(t.name) + '</span>' +
+            '<span class="third-group-badge">' + escHtml(t.group) + '</span>' +
+            '</div></td>' +
+            '<td>' + t.mp + '</td>' +
+            '<td>' + t.w + '</td>' +
+            '<td>' + t.d + '</td>' +
+            '<td>' + t.l + '</td>' +
+            '<td>' + t.gf + '</td>' +
+            '<td>' + t.ga + '</td>' +
+            '<td class="' + gdClass + '" style="font-weight:600">' + gdStr + '</td>' +
+            '<td class="col-pts">' + t.pts + '</td>' +
+            '</tr>';
+    });
+
+    const comboHTML = combo ? '<span class="qualifying-combo">Tổ hợp: ' + escHtml(combo) + '</span>' : '';
+
+    return '<div class="section">' +
+        '<div class="section-title"><span class="section-title-icon">&#128260;</span> Xếp hạng đội hạng 3</div>' +
+        '<div class="third-place-wrapper">' +
+        '<div class="third-place-header">' +
+        '<span class="third-place-header-title">So sánh các đội hạng 3</span>' +
+        comboHTML +
+        '<span class="third-place-header-sub">Top 8 đi tiếp</span>' +
+        '</div>' +
+        '<div style="overflow-x:auto;">' +
+        '<table class="third-table">' +
+        '<thead><tr>' +
+        '<th>#</th><th>Đội</th><th>T</th><th>Th</th><th>H</th><th>B</th><th>BT</th><th>BB</th><th>+/-</th><th>Đ</th>' +
+        '</tr></thead>' +
+        '<tbody>' + rowsHTML + '</tbody>' +
+        '</table></div></div></div>';
+}
+
+// ============================================
+// BRACKET
+// ============================================
+function renderBracket(bracket) {
+    if (!bracket) return '';
+
+    const totalH = 8 * SLOT_H + HALF_DIVIDER; // 728
+
+    // Build left side
+    const leftR32  = buildRoundCards(BRACKET_LEFT_R32, bracket, 8, totalH, 'left');
+    const leftR16  = buildRoundCards(BRACKET_LEFT_R16, bracket, 4, totalH, 'left');
+    const leftQF   = buildRoundCards(BRACKET_LEFT_QF, bracket, 2, totalH, 'left');
+    const leftSF   = buildRoundCards(BRACKET_LEFT_SF, bracket, 1, totalH, 'left');
+
+    // Build right side
+    const rightR32 = buildRoundCards(BRACKET_RIGHT_R32, bracket, 8, totalH, 'right');
+    const rightR16 = buildRoundCards(BRACKET_RIGHT_R16, bracket, 4, totalH, 'right');
+    const rightQF  = buildRoundCards(BRACKET_RIGHT_QF, bracket, 2, totalH, 'right');
+    const rightSF  = buildRoundCards(BRACKET_RIGHT_SF, bracket, 1, totalH, 'right');
+
+    // Connectors
+    const connL_R32_R16 = buildConnectors(leftR32.positions, leftR16.positions, totalH, 'left');
+    const connL_R16_QF  = buildConnectors(leftR16.positions, leftQF.positions, totalH, 'left');
+    const connL_QF_SF   = buildConnectors(leftQF.positions, leftSF.positions, totalH, 'left');
+
+    const connR_R32_R16 = buildConnectors(rightR32.positions, rightR16.positions, totalH, 'right');
+    const connR_R16_QF  = buildConnectors(rightR16.positions, rightQF.positions, totalH, 'right');
+    const connR_QF_SF   = buildConnectors(rightQF.positions, rightSF.positions, totalH, 'right');
+
+    // SF to Final connectors (bezier curves)
+    const leftSFCenter = leftSF.positions[0] + CARD_H / 2;
+    const rightSFCenter = rightSF.positions[0] + CARD_H / 2;
+    const finalCenter = totalH / 2;
+
+    const connL_SF_F = buildSFtoFinalConnector(leftSFCenter, finalCenter, totalH, 'left');
+    const connR_SF_F = buildSFtoFinalConnector(rightSFCenter, finalCenter, totalH, 'right');
+
+    // Center cards (Final + 3rd)
+    const finalMatch = bracket[String(BRACKET_FINAL[0])];
+    const thirdMatch = bracket[String(BRACKET_THIRD[0])];
+
+    const finalTop = totalH / 2 - CARD_H / 2;
+    const thirdTop = finalTop + CARD_H + 40;
+
+    const centerHTML = '<div class="bracket-center">' +
+        '<span class="trophy-icon">&#127942;</span>' +
+        '<span class="round-label">Chung kết</span>' +
+        '<div style="position:relative;height:' + totalH + 'px;width:185px;">' +
+        (finalMatch ? renderBracketCard(finalMatch, finalTop, 'center') : '') +
+        (thirdMatch ?
+            '<div style="position:absolute;top:' + (thirdTop - 18) + 'px;width:100%;text-align:center;">' +
+            '<span class="third-place-label">Tranh hạng 3</span></div>' +
+            renderBracketCard(thirdMatch, thirdTop + 12, 'center') : '') +
+        '</div></div>';
+
+    return '<div class="section">' +
+        '<div class="section-title"><span class="section-title-icon">&#127942;</span> Sơ đồ knockout</div>' +
+        '<div class="bracket-section">' +
+        '<div class="bracket-scroll-hint">&larr; Vuốt ngang để xem toàn bộ &rarr;</div>' +
+        '<div class="bracket-container">' +
+
+        // LEFT SIDE
+        '<div class="bracket-side left">' +
+        renderRoundCol('V.32', leftR32.html, totalH) +
+        '<div class="connector-col">' + connL_R32_R16 + '</div>' +
+        renderRoundCol('V.16', leftR16.html, totalH) +
+        '<div class="connector-col">' + connL_R16_QF + '</div>' +
+        renderRoundCol('Tứ kết', leftQF.html, totalH) +
+        '<div class="connector-col">' + connL_QF_SF + '</div>' +
+        renderRoundCol('Bán kết', leftSF.html, totalH) +
+        '<div class="connector-col">' + connL_SF_F + '</div>' +
+        '</div>' +
+
+        // CENTER
+        centerHTML +
+
+        // RIGHT SIDE
+        '<div class="bracket-side right">' +
+        renderRoundCol('V.32', rightR32.html, totalH) +
+        '<div class="connector-col">' + connR_R32_R16 + '</div>' +
+        renderRoundCol('V.16', rightR16.html, totalH) +
+        '<div class="connector-col">' + connR_R16_QF + '</div>' +
+        renderRoundCol('Tứ kết', rightQF.html, totalH) +
+        '<div class="connector-col">' + connR_QF_SF + '</div>' +
+        renderRoundCol('Bán kết', rightSF.html, totalH) +
+        '<div class="connector-col">' + connR_SF_F + '</div>' +
+        '</div>' +
+
+        '</div></div></div>';
+}
+
+function renderRoundCol(label, cardsHTML, totalH) {
+    return '<div class="bracket-round-col">' +
+        '<span class="round-label">' + escHtml(label) + '</span>' +
+        '<div class="round-cards" style="position:relative;width:' + CARD_W + 'px;height:' + totalH + 'px;">' +
+        cardsHTML +
+        '</div></div>';
+}
+
+// ============================================
+// BUILD ROUND CARDS (absolute positioning)
+// ============================================
+function buildRoundCards(matchNums, bracket, count, totalH, side) {
+    // count = number of cards in this round on this side
+    // 8 cards: top 4, divider, bottom 4
+    // 4 cards: top 2, divider, bottom 2
+    // 2 cards: top 1, divider, bottom 1
+    // 1 card: centered
+
+    const positions = [];
+    let html = '';
+
+    if (count === 1) {
+        // Single card - centered
+        const top = totalH / 2 - CARD_H / 2;
+        positions.push(top);
+        const m = bracket[String(matchNums[0])];
+        if (m) html += renderBracketCard(m, top, side);
+    } else {
+        const half = count / 2;
+        // Top half
+        for (let i = 0; i < half; i++) {
+            const top = computeCardTop(i, half, totalH, 'top');
+            positions.push(top);
+            const m = bracket[String(matchNums[i])];
+            if (m) html += renderBracketCard(m, top, side);
+        }
+        // Bottom half
+        for (let i = 0; i < half; i++) {
+            const top = computeCardTop(i, half, totalH, 'bottom');
+            positions.push(top);
+            const m = bracket[String(matchNums[half + i])];
+            if (m) html += renderBracketCard(m, top, side);
+        }
+    }
+
+    return { html, positions };
+}
+
+function computeCardTop(index, halfCount, totalH, half) {
+    // Each half occupies (totalH - HALF_DIVIDER) / 2
+    const halfHeight = (totalH - HALF_DIVIDER) / 2;
+    const baseOffset = half === 'top' ? 0 : halfHeight + HALF_DIVIDER;
+
+    if (halfCount === 1) {
+        return baseOffset + halfHeight / 2 - CARD_H / 2;
+    }
+
+    // Distribute cards evenly within their half
+    const totalCardsHeight = halfCount * CARD_H + (halfCount - 1) * GAP;
+    const startY = baseOffset + (halfHeight - totalCardsHeight) / 2;
+    return startY + index * (CARD_H + GAP);
+}
+
+// ============================================
+// RENDER SINGLE BRACKET CARD
+// ============================================
+function renderBracketCard(match, top, side) {
+    const accentColor = getRoundColor(match);
+    const homeTeam = match.home || 'TBD';
+    const awayTeam = match.away || 'TBD';
+    const homeFlag = match.homeFlag || '';
+    const awayFlag = match.awayFlag || '';
+    const hasScore = match.homeScore !== null && match.homeScore !== undefined;
+
+    let homeClass = '';
+    let awayClass = '';
+    if (hasScore) {
+        const hs = match.homePenalty != null ? match.homePenalty : match.homeScore;
+        const as = match.awayPenalty != null ? match.awayPenalty : match.awayScore;
+        if (hs > as) { homeClass = 'winner'; awayClass = 'loser'; }
+        else if (as > hs) { awayClass = 'winner'; homeClass = 'loser'; }
+    }
+
+    const homeTBD = !match.home;
+    const awayTBD = !match.away;
+
+    // Format date
+    let dateStr = '';
+    let timeStr = '';
+    if (match.date) {
+        try {
+            const d = new Date(match.date);
+            dateStr = d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', timeZone: 'Asia/Ho_Chi_Minh' });
+            timeStr = d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Ho_Chi_Minh' });
+        } catch (e) { /* ignore */ }
+    }
+
+    const venue = match.venue || '';
+    const penaltyHTML = (hasScore && match.homePenalty != null)
+        ? '<div class="card-penalty">Pen: ' + match.homePenalty + ' - ' + match.awayPenalty + '</div>'
+        : '';
+
+    const posStyle = side === 'center'
+        ? 'position:absolute;top:' + top + 'px;left:50%;transform:translateX(-50%);'
+        : 'position:absolute;top:' + top + 'px;left:0;';
+
+    return '<div class="bracket-match-card" style="' + posStyle + '--card-accent:' + accentColor + ';">' +
+        '<div class="card-header">' +
+        '<span class="card-match-num">M' + match.num + '</span>' +
+        '<span class="card-datetime">' + dateStr + ' ' + timeStr + '</span>' +
+        '</div>' +
+        (venue ? '<div class="card-venue">' + escHtml(venue) + '</div>' : '') +
+        '<div class="card-teams">' +
+        '<div class="card-team-row ' + homeClass + '">' +
+        '<span class="card-team-flag">' + homeFlag + '</span>' +
+        '<span class="card-team-name' + (homeTBD ? ' tbd' : '') + '">' + escHtml(homeTeam) + '</span>' +
+        (hasScore ? '<span class="card-team-score">' + match.homeScore + '</span>' : '') +
+        '</div>' +
+        '<div class="card-team-row ' + awayClass + '">' +
+        '<span class="card-team-flag">' + awayFlag + '</span>' +
+        '<span class="card-team-name' + (awayTBD ? ' tbd' : '') + '">' + escHtml(awayTeam) + '</span>' +
+        (hasScore ? '<span class="card-team-score">' + match.awayScore + '</span>' : '') +
+        '</div>' +
+        '</div>' +
+        penaltyHTML +
+        '</div>';
+}
+
+// ============================================
+// BRACKET CONNECTORS (SVG)
+// ============================================
+function buildConnectors(fromPositions, toPositions, totalH, side) {
+    // fromPositions: array of top values for source round
+    // toPositions: array of top values for destination round
+    // Each pair of from cards connects to one to card
+    const w = 28;
+    let paths = '';
+
+    for (let i = 0; i < fromPositions.length; i += 2) {
+        const targetIdx = Math.floor(i / 2);
+        if (targetIdx >= toPositions.length) break;
+
+        const y1 = fromPositions[i] + CARD_H / 2;
+        const y2 = fromPositions[i + 1] + CARD_H / 2;
+        const yT = toPositions[targetIdx] + CARD_H / 2;
+
+        const color = 'rgba(100, 120, 160, 0.3)';
+
+        if (side === 'left') {
+            paths += '<path d="M 0 ' + y1 + ' H ' + (w / 2) + '" stroke="' + color + '" stroke-width="1.5" fill="none"/>';
+            paths += '<path d="M 0 ' + y2 + ' H ' + (w / 2) + '" stroke="' + color + '" stroke-width="1.5" fill="none"/>';
+            paths += '<path d="M ' + (w / 2) + ' ' + y1 + ' V ' + y2 + '" stroke="' + color + '" stroke-width="1.5" fill="none"/>';
+            paths += '<path d="M ' + (w / 2) + ' ' + yT + ' H ' + w + '" stroke="' + color + '" stroke-width="1.5" fill="none"/>';
+        } else {
+            paths += '<path d="M ' + w + ' ' + y1 + ' H ' + (w / 2) + '" stroke="' + color + '" stroke-width="1.5" fill="none"/>';
+            paths += '<path d="M ' + w + ' ' + y2 + ' H ' + (w / 2) + '" stroke="' + color + '" stroke-width="1.5" fill="none"/>';
+            paths += '<path d="M ' + (w / 2) + ' ' + y1 + ' V ' + y2 + '" stroke="' + color + '" stroke-width="1.5" fill="none"/>';
+            paths += '<path d="M ' + (w / 2) + ' ' + yT + ' H 0" stroke="' + color + '" stroke-width="1.5" fill="none"/>';
+        }
+    }
+
+    return '<svg width="' + w + '" height="' + totalH + '" style="position:absolute;top:28px;left:0;">' + paths + '</svg>';
+}
+
+function buildSFtoFinalConnector(sfCenter, finalCenter, totalH, side) {
+    const w = 28;
+    const color = 'rgba(234, 179, 8, 0.4)';
+
+    let path;
+    if (side === 'left') {
+        const cpX = w * 0.7;
+        path = '<path d="M 0 ' + sfCenter + ' C ' + cpX + ' ' + sfCenter + ' ' + cpX + ' ' + finalCenter + ' ' + w + ' ' + finalCenter + '" stroke="' + color + '" stroke-width="2" fill="none"/>';
+    } else {
+        const cpX = w * 0.3;
+        path = '<path d="M ' + w + ' ' + sfCenter + ' C ' + cpX + ' ' + sfCenter + ' ' + cpX + ' ' + finalCenter + ' 0 ' + finalCenter + '" stroke="' + color + '" stroke-width="2" fill="none"/>';
+    }
+
+    return '<svg width="' + w + '" height="' + totalH + '" style="position:absolute;top:28px;left:0;">' + path + '</svg>';
+}
+
+// ============================================
+// UTILITIES
+// ============================================
+function escHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+// ============================================
+// INIT
+// ============================================
+document.addEventListener('DOMContentLoaded', loadData);
+</script>
+
+</body>
+</html>
