@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>World Cup 2026 — Tổng quan giải đấu</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
     <style>
         /* ============================================
            CSS RESET + VARIABLES
@@ -55,40 +56,63 @@
            HEADER
            ============================================ */
         .site-header {
-            background: linear-gradient(135deg, #16213e 0%, #1a1a2e 50%, #0f0e17 100%);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--bg);
             border-bottom: 1px solid var(--stroke);
-            padding: 24px 20px 20px;
-            text-align: center;
+        }
+
+        .header-banner {
+            width: 100%;
+            display: block;
+            max-height: 180px;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .header-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            gap: 12px;
+            flex-wrap: wrap;
+            background: linear-gradient(135deg, #16213e 0%, #1a1a2e 50%, #0f0e17 100%);
+        }
+
+        .header-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
         }
 
         .header-title {
-            font-size: 28px;
+            font-size: 20px;
             font-weight: 800;
             background: linear-gradient(135deg, #eab308, #f59e0b, #fbbf24);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             letter-spacing: -0.5px;
-            margin-bottom: 4px;
+            line-height: 1.2;
         }
 
         .header-subtitle {
-            font-size: 14px;
+            font-size: 12px;
             color: var(--text-secondary);
             font-weight: 500;
         }
 
-        .header-meta {
+        .header-actions {
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 16px;
-            margin-top: 12px;
+            gap: 12px;
             flex-wrap: wrap;
         }
 
         .meta-updated {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-tertiary);
         }
 
@@ -699,13 +723,18 @@
 <body>
 
 <header class="site-header">
-    <div class="header-title">World Cup 2026</div>
-    <div class="header-subtitle">Tổng quan giải đấu</div>
-    <div class="header-meta">
-        <span class="meta-updated" id="metaUpdated"></span>
-        <button class="btn-refresh" id="btnRefresh" onclick="refreshData()">
-            <span id="refreshIcon">&#8635;</span> Làm mới
-        </button>
+    <img class="header-banner" src="/banner.png" alt="World Cup 2026">
+    <div class="header-bar">
+        <div class="header-info">
+            <div class="header-title">World Cup 2026</div>
+            <div class="header-subtitle">Tổng quan giải đấu</div>
+        </div>
+        <div class="header-actions">
+            <span class="meta-updated" id="metaUpdated"></span>
+            <button class="btn-refresh" id="btnRefresh" onclick="refreshData()">
+                <span id="refreshIcon">&#8635;</span> Làm mới
+            </button>
+        </div>
     </div>
 </header>
 
@@ -717,7 +746,8 @@
 </main>
 
 <footer class="site-footer">
-    FIFA World Cup 2026 &mdash; Dữ liệu được cập nhật tự động
+    Hệ thống mô phỏng by <a href="https://nhanluu.com" target="_blank" rel="noopener" style="color:var(--text-secondary);text-decoration:underline;text-underline-offset:3px;">Nhân Lưu</a>
+    &nbsp;&mdash;&nbsp; Data by FIFA World Cup
 </footer>
 
 <script>
