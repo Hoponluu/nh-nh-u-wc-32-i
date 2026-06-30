@@ -576,15 +576,6 @@
             font-size: 9px;
         }
 
-        .card-venue {
-            padding: 0 8px 3px;
-            font-size: 9px;
-            color: var(--text-tertiary);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
         .card-teams {
             padding: 4px 8px 6px;
         }
@@ -637,12 +628,11 @@
             color: var(--green-text);
         }
 
-        .card-penalty {
-            text-align: center;
+        .card-penalty-inline {
             font-size: 9px;
-            color: var(--yellow-text);
             font-weight: 600;
-            padding-bottom: 3px;
+            color: var(--yellow-border);
+            margin-left: 2px;
         }
 
         .card-group-pos {
@@ -1190,36 +1180,41 @@ function renderBracketCard(match, top, side) {
         } catch (e) { /* ignore */ }
     }
 
-    const venue = match.venue || '';
-    const penaltyHTML = (hasScore && match.homePenalty != null)
-        ? '<div class="card-penalty">Pen: ' + match.homePenalty + ' - ' + match.awayPenalty + '</div>'
-        : '';
 
     const posStyle = side === 'center'
         ? 'position:absolute;top:' + top + 'px;left:50%;transform:translateX(-50%);'
         : 'position:absolute;top:' + top + 'px;left:0;';
+
+    const homeScoreHTML = hasScore
+        ? '<span class="card-team-score">' + match.homeScore +
+          (match.homePenalty != null ? '<span class="card-penalty-inline">(' + match.homePenalty + ')</span>' : '') +
+          '</span>'
+        : '';
+    const awayScoreHTML = hasScore
+        ? '<span class="card-team-score">' + match.awayScore +
+          (match.awayPenalty != null ? '<span class="card-penalty-inline">(' + match.awayPenalty + ')</span>' : '') +
+          '</span>'
+        : '';
 
     return '<div class="bracket-match-card" style="' + posStyle + '--card-accent:' + accentColor + ';">' +
         '<div class="card-header">' +
         '<span class="card-match-num">M' + match.num + '</span>' +
         '<span class="card-datetime">' + dateStr + ' ' + timeStr + '</span>' +
         '</div>' +
-        (venue ? '<div class="card-venue">' + escHtml(venue) + '</div>' : '') +
         '<div class="card-teams">' +
         '<div class="card-team-row ' + homeClass + '">' +
         '<span class="card-team-flag">' + homeFlag + '</span>' +
         '<span class="card-team-name' + (homeTBD ? ' tbd' : '') + '">' + escHtml(homeTeam) + '</span>' +
         (match.homeGroupPos ? '<span class="card-group-pos">' + escHtml(match.homeGroupPos) + '</span>' : '') +
-        (hasScore ? '<span class="card-team-score">' + match.homeScore + '</span>' : '') +
+        homeScoreHTML +
         '</div>' +
         '<div class="card-team-row ' + awayClass + '">' +
         '<span class="card-team-flag">' + awayFlag + '</span>' +
         '<span class="card-team-name' + (awayTBD ? ' tbd' : '') + '">' + escHtml(awayTeam) + '</span>' +
         (match.awayGroupPos ? '<span class="card-group-pos">' + escHtml(match.awayGroupPos) + '</span>' : '') +
-        (hasScore ? '<span class="card-team-score">' + match.awayScore + '</span>' : '') +
+        awayScoreHTML +
         '</div>' +
         '</div>' +
-        penaltyHTML +
         '</div>';
 }
 
