@@ -460,7 +460,7 @@
             inset: 0;
             background: url('/TheWorldcup.png') center center / auto no-repeat;
             background-attachment: fixed;
-            opacity: 0.1;
+            opacity: 0.08;
             pointer-events: none;
             z-index: 0;
         }
@@ -468,6 +468,90 @@
         .bracket-section > * {
             position: relative;
             z-index: 1;
+        }
+
+        /* Dark theme overrides scoped to bracket section */
+        .bracket-section {
+            background: #0d1628;
+        }
+
+        .bracket-section .bracket-match-card {
+            background: #162035;
+            border-color: #253550;
+        }
+
+        .bracket-section .card-header {
+            background: rgba(0, 0, 0, 0.35);
+        }
+
+        .bracket-section .card-match-num {
+            color: #8aa0c0;
+        }
+
+        .bracket-section .card-datetime {
+            color: #4e6080;
+        }
+
+        .bracket-section .card-team-name {
+            color: #d8e4f4;
+        }
+
+        .bracket-section .card-team-name.tbd {
+            color: #4e6080;
+        }
+
+        .bracket-section .card-team-score {
+            color: #d8e4f4;
+        }
+
+        .bracket-section .card-team-row + .card-team-row {
+            border-top-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .bracket-section .card-team-row.winner .card-team-name {
+            color: #34d399;
+        }
+
+        .bracket-section .card-team-row.loser {
+            opacity: 0.35;
+        }
+
+        .bracket-section .round-label {
+            background: #162035;
+            border-color: #253550;
+            color: #6a82a8;
+        }
+
+        .bracket-section .bracket-center .round-label {
+            background: linear-gradient(135deg, var(--gold), #f59e0b);
+            color: #1a1a2e;
+            border: none;
+        }
+
+        .bracket-section .third-place-label {
+            background: #162035;
+            border-color: #253550;
+            color: #6a82a8;
+        }
+
+        .bracket-section .bracket-scroll-hint {
+            color: #4e6080;
+        }
+
+        /* Circular bracket dark overrides */
+        .bracket-section .circ-slot {
+            background: #162035;
+            border-color: #253550;
+        }
+
+        .bracket-section .circ-slot-tip {
+            background: #1e2e4a;
+            border-color: #2a3a5c;
+            color: #a0b4cc;
+        }
+
+        .bracket-section .circ-legend {
+            color: #6a82a8;
         }
 
         .bracket-scroll-hint {
@@ -710,7 +794,7 @@
 
 
         /* ============================================
-           BRACKET TABS
+           BRACKET TABS (dark theme)
            ============================================ */
         .bracket-tabs {
             display: flex;
@@ -721,11 +805,11 @@
 
         .bracket-tab-btn {
             padding: 8px 20px;
-            border: 1px solid var(--stroke);
+            border: 1px solid #2a3a5c;
             border-bottom: none;
             border-radius: var(--radius-sm) var(--radius-sm) 0 0;
-            background: var(--surface-alt);
-            color: var(--text-secondary);
+            background: #162035;
+            color: #6a82a8;
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
@@ -733,14 +817,15 @@
         }
 
         .bracket-tab-btn.active {
-            background: var(--surface);
-            color: var(--text-primary);
+            background: #0d1628;
+            color: #e2e8f0;
             position: relative;
             z-index: 2;
         }
 
         .bracket-tab-btn:hover:not(.active) {
-            background: var(--surface-hover);
+            background: #1a2840;
+            color: #a0b4cc;
         }
 
         .bracket-tab-pane { display: none; }
@@ -1627,7 +1712,7 @@ function drawCircularBracket(bracket) {
             const parent = slots[L + 1][k];
             const isWinner = team && parent && parent.name === team.name;
             const q = team ? team.q : Math.floor(i / (CIRC_ROUNDS[L] / 4));
-            const color = isWinner ? CIRC_COLORS[q] : 'rgba(0,0,0,0.25)';
+            const color = isWinner ? CIRC_COLORS[q] : 'rgba(255,255,255,0.18)';
             const width = isWinner ? 3 : 1.5;
 
             const midAngle = cp.angleDeg * Math.PI / 180;
@@ -1804,7 +1889,7 @@ function buildConnectors(fromPositions, toPositions, totalH, side) {
         const y2 = fromPositions[i + 1] + CARD_H / 2;
         const yT = toPositions[targetIdx] + CARD_H / 2;
 
-        const color = 'rgba(37, 99, 235, 0.3)';
+        const color = 'rgba(100, 160, 255, 0.55)';
 
         if (side === 'left') {
             paths += '<path d="M 0 ' + y1 + ' H ' + (w / 2) + '" stroke="' + color + '" stroke-width="1.5" fill="none"/>';
@@ -1824,7 +1909,7 @@ function buildConnectors(fromPositions, toPositions, totalH, side) {
 
 function buildSFtoFinalConnector(sfCenter, finalCenter, totalH, side) {
     const w = 28;
-    const color = 'rgba(180, 83, 9, 0.5)';
+    const color = 'rgba(251, 191, 36, 0.65)';
 
     let path;
     if (side === 'left') {
