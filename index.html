@@ -460,7 +460,7 @@
             inset: 0;
             background: url('/TheWorldcup.png') center center / auto no-repeat;
             background-attachment: fixed;
-            opacity: 0.3;
+            opacity: 0.2;
             pointer-events: none;
             z-index: 0;
         }
@@ -1527,8 +1527,8 @@ const CIRC_L4 = [104];
 // Quadrant colors: 0=gold, 1=green, 2=pink, 3=blue
 const CIRC_COLORS = ['#d97706','#059669','#db2777','#2563eb'];
 const CIRC_COLORS_LIGHT = [
-    'rgba(217,119,6,0.13)', 'rgba(5,150,105,0.13)',
-    'rgba(219,39,119,0.13)', 'rgba(37,99,235,0.13)'
+    'rgba(217,119,6,0.28)', 'rgba(5,150,105,0.28)',
+    'rgba(219,39,119,0.28)', 'rgba(37,99,235,0.28)'
 ];
 
 let circActivePopup = null;
@@ -1627,8 +1627,8 @@ function drawCircularBracket(bracket) {
             const parent = slots[L + 1][k];
             const isWinner = team && parent && parent.name === team.name;
             const q = team ? team.q : Math.floor(i / (CIRC_ROUNDS[L] / 4));
-            const color = isWinner ? CIRC_COLORS[q] : 'rgba(0,0,0,0.1)';
-            const width = isWinner ? 2.5 : 1;
+            const color = isWinner ? CIRC_COLORS[q] : 'rgba(0,0,0,0.22)';
+            const width = isWinner ? 3 : 1.2;
 
             const midAngle = cp.angleDeg * Math.PI / 180;
             const midX = CIRC_CENTER + pp.r * Math.cos(midAngle);
