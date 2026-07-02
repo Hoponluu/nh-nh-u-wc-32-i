@@ -710,6 +710,257 @@
 
 
         /* ============================================
+           BRACKET TABS
+           ============================================ */
+        .bracket-tabs {
+            display: flex;
+            gap: 4px;
+            padding: 0;
+            margin-bottom: 0;
+        }
+
+        .bracket-tab-btn {
+            padding: 8px 20px;
+            border: 1px solid var(--stroke);
+            border-bottom: none;
+            border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+            background: var(--surface-alt);
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .bracket-tab-btn.active {
+            background: var(--surface);
+            color: var(--text-primary);
+            position: relative;
+            z-index: 2;
+        }
+
+        .bracket-tab-btn:hover:not(.active) {
+            background: var(--surface-hover);
+        }
+
+        .bracket-tab-pane { display: none; }
+        .bracket-tab-pane.active { display: block; }
+
+        /* ============================================
+           CIRCULAR BRACKET
+           ============================================ */
+        .circ-stage-outer {
+            display: flex;
+            justify-content: center;
+            padding: 24px 10px 50px;
+            overflow-x: auto;
+        }
+
+        .circ-stage-wrap {
+            position: relative;
+            width: 840px;
+            height: 840px;
+            flex: none;
+        }
+
+        #circStage {
+            position: absolute;
+            inset: 0;
+            width: 840px;
+            height: 840px;
+        }
+
+        #circLines {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+            pointer-events: none;
+        }
+
+        .circ-slot {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface);
+            border: 2px solid var(--stroke);
+            user-select: none;
+            overflow: visible;
+        }
+
+        .circ-slot.filled {
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+
+        .circ-slot.filled:hover {
+            transform: translate(-50%, -50%) scale(1.12);
+            box-shadow: 0 0 0 3px rgba(0,0,0,0.1), 0 4px 16px rgba(0,0,0,0.2);
+            z-index: 5;
+        }
+
+        .circ-slot.empty { opacity: 0.22; }
+
+        .circ-slot.loser {
+            opacity: 0.28;
+            filter: grayscale(0.5);
+        }
+
+        .circ-slot.champion {
+            box-shadow: 0 0 0 3px #d97706, 0 0 20px rgba(217,119,6,0.35);
+        }
+
+        .circ-slot-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .circ-slot-tip {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 9px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            pointer-events: none;
+            background: var(--surface);
+            padding: 1px 5px;
+            border-radius: 3px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+            border: 1px solid var(--stroke);
+            opacity: 0;
+            transition: opacity 0.15s;
+            z-index: 10;
+        }
+
+        .circ-slot.filled:hover .circ-slot-tip { opacity: 1; }
+
+        .circ-trophy {
+            position: absolute;
+            left: 50%; top: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 44px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .circ-legend {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            padding: 12px 16px 0;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .circ-legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .circ-legend-dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        /* Circular popup */
+        .circ-popup {
+            position: fixed;
+            z-index: 1000;
+            background: var(--surface);
+            border: 1px solid var(--stroke);
+            border-radius: var(--radius);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+            padding: 12px 16px 10px;
+            min-width: 210px;
+            max-width: 280px;
+        }
+
+        .circ-popup-close {
+            position: absolute;
+            top: 6px; right: 10px;
+            cursor: pointer;
+            font-size: 15px;
+            color: var(--text-tertiary);
+            line-height: 1;
+        }
+
+        .circ-popup-close:hover { color: var(--text-primary); }
+
+        .circ-popup-title {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 8px;
+            padding-right: 16px;
+        }
+
+        .circ-popup-team {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 6px;
+            border-radius: 4px;
+        }
+
+        .circ-popup-team + .circ-popup-team {
+            border-top: 1px solid var(--stroke);
+        }
+
+        .circ-popup-team.winner { background: var(--green-bg); }
+        .circ-popup-team.loser-row { opacity: 0.45; }
+
+        .circ-popup-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+            flex: 1;
+        }
+
+        .circ-popup-score {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .circ-popup-pen {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--yellow-border);
+            margin-left: 2px;
+        }
+
+        .circ-popup-date {
+            font-size: 10px;
+            color: var(--text-tertiary);
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        .circ-no-result {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            text-align: center;
+            padding: 4px 0;
+            font-style: italic;
+        }
+
+        /* ============================================
            FOOTER
            ============================================ */
         .site-footer {
@@ -1102,9 +1353,27 @@ function renderBracket(bracket) {
             renderBracketCard(thirdMatch, thirdTop + 12, 'center') : '') +
         '</div></div>';
 
+    const circLegendHTML =
+        '<div class="circ-legend">' +
+        '<span class="circ-legend-item"><i class="circ-legend-dot" style="background:#d97706"></i>Nhánh 1</span>' +
+        '<span class="circ-legend-item"><i class="circ-legend-dot" style="background:#059669"></i>Nhánh 2</span>' +
+        '<span class="circ-legend-item"><i class="circ-legend-dot" style="background:#db2777"></i>Nhánh 3</span>' +
+        '<span class="circ-legend-item"><i class="circ-legend-dot" style="background:#2563eb"></i>Nhánh 4</span>' +
+        '</div>';
+
     return '<div class="section">' +
         '<div class="section-title"><span class="section-title-icon">&#127942;</span> Sơ đồ knockout</div>' +
+
+        // Tab switcher
+        '<div class="bracket-tabs">' +
+        '<button class="bracket-tab-btn active" data-tab="nhanh" onclick="switchBracketTab(\'nhanh\')">&#128307; Sơ đồ nhánh</button>' +
+        '<button class="bracket-tab-btn" data-tab="tron" onclick="switchBracketTab(\'tron\')">&#9711; Sơ đồ tròn</button>' +
+        '</div>' +
+
         '<div class="bracket-section">' +
+
+        // Pane: bracket tree
+        '<div class="bracket-tab-pane active" id="tab-nhanh">' +
         '<div class="bracket-scroll-hint">&larr; Vuốt ngang để xem toàn bộ &rarr;</div>' +
         '<div class="bracket-container">' +
 
@@ -1135,7 +1404,22 @@ function renderBracket(bracket) {
         '<div class="connector-col">' + connR_SF_F + '</div>' +
         '</div>' +
 
-        '</div></div></div>';
+        '</div>' + // bracket-container
+        '</div>' + // tab-nhanh
+
+        // Pane: circular bracket
+        '<div class="bracket-tab-pane" id="tab-tron">' +
+        circLegendHTML +
+        '<div class="circ-stage-outer">' +
+        '<div class="circ-stage-wrap">' +
+        '<div id="circStage">' +
+        '<svg id="circLines" viewBox="0 0 840 840"></svg>' +
+        '<div id="circTrophy" class="circ-trophy">&#127942;</div>' +
+        '</div></div></div>' +
+        '</div>' + // tab-tron
+
+        '</div>' + // bracket-section
+        '</div>'; // section
 }
 
 function renderRoundCol(label, cardsHTML, totalH) {
@@ -1219,6 +1503,290 @@ function renderBracketCard(match, top, side) {
 }
 
 // ============================================
+// CIRCULAR BRACKET
+// ============================================
+const CIRC_SIZE = 840;
+const CIRC_CENTER = 420;
+const CIRC_ROUNDS = [32, 16, 8, 4, 2, 1];
+const CIRC_RADIUS = [394, 328, 260, 190, 120, 0];
+const CIRC_DIAM   = [38, 46, 54, 62, 76, 102];
+const CIRC_FLAG_SCALE = 0.65;
+const CIRC_ROTATION_DEG = -45;
+
+// R32 matches (16 matches → 32 slots, 2 per match)
+const CIRC_L0 = [74,77,73,75, 83,84,81,82, 76,78,79,80, 86,88,85,87];
+// R16 matches (8 matches → 8 slot pairs)
+const CIRC_L1 = [89,90,93,94, 91,92,95,96];
+// QF matches (4 matches → 4 slot pairs)
+const CIRC_L2 = [97,98,99,100];
+// SF matches (2 matches → 2 slot pairs)
+const CIRC_L3 = [101,102];
+// Final
+const CIRC_L4 = [104];
+
+// Quadrant colors: 0=gold, 1=green, 2=pink, 3=blue
+const CIRC_COLORS = ['#d97706','#059669','#db2777','#2563eb'];
+const CIRC_COLORS_LIGHT = [
+    'rgba(217,119,6,0.13)', 'rgba(5,150,105,0.13)',
+    'rgba(219,39,119,0.13)', 'rgba(37,99,235,0.13)'
+];
+
+let circActivePopup = null;
+
+function circPos(level, index) {
+    const n = CIRC_ROUNDS[level];
+    const step = 360 / n;
+    const angleDeg = -90 + CIRC_ROTATION_DEG + (index + 0.5) * step;
+    const rad = angleDeg * Math.PI / 180;
+    const r = CIRC_RADIUS[level];
+    return {
+        x: CIRC_CENTER + r * Math.cos(rad),
+        y: CIRC_CENTER + r * Math.sin(rad),
+        angleDeg, r
+    };
+}
+
+function circMatchWinner(m) {
+    if (!m || m.homeScore == null) return null;
+    const hs = m.homePenalty != null ? m.homePenalty : m.homeScore;
+    const as = m.awayPenalty != null ? m.awayPenalty : m.awayScore;
+    if (hs > as) return { name: m.home || '', flag: m.homeFlag || '' };
+    if (as > hs) return { name: m.away || '', flag: m.awayFlag || '' };
+    return null;
+}
+
+function buildCircSlots(bracket) {
+    const slots = CIRC_ROUNDS.map(n => new Array(n).fill(null));
+
+    // L0: home/away teams for each R32 match (4 matches per quadrant)
+    CIRC_L0.forEach((mNum, i) => {
+        const m = bracket[String(mNum)];
+        if (!m) return;
+        const q = Math.floor(i / 4);
+        if (m.home) slots[0][i * 2]     = { name: m.home, flag: m.homeFlag || '', q };
+        if (m.away) slots[0][i * 2 + 1] = { name: m.away, flag: m.awayFlag || '', q };
+    });
+
+    // L1: winner of each R32 match → 16 slots (2 per quadrant's R16 matches)
+    CIRC_L0.forEach((mNum, i) => {
+        const w = circMatchWinner(bracket[String(mNum)]);
+        if (w) slots[1][i] = { ...w, q: Math.floor(i / 4) };
+    });
+
+    // L2: winner of each R16 match → 8 slots
+    CIRC_L1.forEach((mNum, i) => {
+        const w = circMatchWinner(bracket[String(mNum)]);
+        if (w) slots[2][i] = { ...w, q: Math.floor(i / 2) };
+    });
+
+    // L3: winner of each QF match → 4 slots
+    CIRC_L2.forEach((mNum, i) => {
+        const w = circMatchWinner(bracket[String(mNum)]);
+        if (w) slots[3][i] = { ...w, q: i };
+    });
+
+    // L4: winner of each SF match → 2 slots
+    CIRC_L3.forEach((mNum, i) => {
+        const w = circMatchWinner(bracket[String(mNum)]);
+        if (w) slots[4][i] = { ...w, q: i === 0 ? 0 : 2 };
+    });
+
+    // L5: champion
+    const champ = circMatchWinner(bracket['104']);
+    if (champ) slots[5][0] = { ...champ, q: 0 };
+
+    return slots;
+}
+
+// Return match number to show in popup when clicking slot at (level, slotIdx)
+function circGetMatchNum(level, slotIdx) {
+    const matchLists = [CIRC_L0, CIRC_L1, CIRC_L2, CIRC_L3, CIRC_L4, CIRC_L4];
+    const list = matchLists[level];
+    if (!list) return null;
+    if (level === 5) return 104;
+    return list[Math.floor(slotIdx / 2)] || null;
+}
+
+function drawCircularBracket(bracket) {
+    const stageEl = document.getElementById('circStage');
+    const svgEl = document.getElementById('circLines');
+    if (!stageEl || !svgEl) return;
+
+    stageEl.querySelectorAll('.circ-slot').forEach(el => el.remove());
+    while (svgEl.firstChild) svgEl.removeChild(svgEl.firstChild);
+
+    const slots = buildCircSlots(bracket);
+
+    // SVG connector lines
+    for (let L = 0; L < CIRC_ROUNDS.length - 1; L++) {
+        for (let i = 0; i < CIRC_ROUNDS[L]; i++) {
+            const k = i >> 1;
+            const cp = circPos(L, i);
+            const pp = circPos(L + 1, k);
+            const team = slots[L][i];
+            const parent = slots[L + 1][k];
+            const isWinner = team && parent && parent.name === team.name;
+            const q = team ? team.q : Math.floor(i / (CIRC_ROUNDS[L] / 4));
+            const color = isWinner ? CIRC_COLORS[q] : 'rgba(0,0,0,0.1)';
+            const width = isWinner ? 2.5 : 1;
+
+            const midAngle = cp.angleDeg * Math.PI / 180;
+            const midX = CIRC_CENTER + pp.r * Math.cos(midAngle);
+            const midY = CIRC_CENTER + pp.r * Math.sin(midAngle);
+            const d = 'M ' + cp.x + ' ' + cp.y + ' L ' + midX + ' ' + midY + ' L ' + pp.x + ' ' + pp.y;
+
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('d', d);
+            path.setAttribute('fill', 'none');
+            path.setAttribute('stroke', color);
+            path.setAttribute('stroke-width', String(width));
+            path.setAttribute('stroke-linecap', 'round');
+            svgEl.appendChild(path);
+        }
+    }
+
+    // Slot circles
+    for (let L = 0; L < CIRC_ROUNDS.length; L++) {
+        for (let i = 0; i < CIRC_ROUNDS[L]; i++) {
+            const team = slots[L][i];
+            const p = circPos(L, i);
+            const d = CIRC_DIAM[L];
+            const q = team ? team.q : Math.floor(i / (CIRC_ROUNDS[L] / 4));
+            const color = CIRC_COLORS[q];
+            const colorLight = CIRC_COLORS_LIGHT[q];
+
+            // Determine loser: sibling slot's team is in parent slot
+            let isLoser = false;
+            if (team && L < CIRC_ROUNDS.length - 1) {
+                const parent = slots[L + 1][i >> 1];
+                if (parent && parent.name !== team.name) isLoser = true;
+            }
+
+            const div = document.createElement('div');
+            div.className = 'circ-slot' +
+                (team ? ' filled' : ' empty') +
+                (L === 5 && team ? ' champion' : '') +
+                (isLoser ? ' loser' : '');
+            div.style.cssText = 'width:' + d + 'px;height:' + d + 'px;left:' + p.x + 'px;top:' + p.y + 'px;';
+
+            if (team) {
+                div.style.borderColor = color;
+                if (!isLoser) div.style.background = colorLight;
+
+                const inner = document.createElement('div');
+                inner.className = 'circ-slot-inner';
+                inner.style.fontSize = Math.round(d * CIRC_FLAG_SCALE) + 'px';
+                inner.textContent = team.flag;
+                div.appendChild(inner);
+
+                const tip = document.createElement('div');
+                tip.className = 'circ-slot-tip';
+                tip.textContent = team.name;
+                div.appendChild(tip);
+
+                const matchNum = circGetMatchNum(L, i);
+                if (matchNum) {
+                    div.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        showCircPopup(e, matchNum, bracket);
+                    });
+                }
+            }
+
+            stageEl.appendChild(div);
+        }
+    }
+
+    const trophyEl = document.getElementById('circTrophy');
+    if (trophyEl) trophyEl.style.display = slots[5][0] ? 'none' : 'block';
+}
+
+function showCircPopup(e, matchNum, bracket) {
+    closeCircPopup();
+    const m = bracket[String(matchNum)];
+    if (!m) return;
+
+    const hasScore = m.homeScore != null;
+    let homeClass = '', awayClass = '';
+    if (hasScore) {
+        const hs = m.homePenalty != null ? m.homePenalty : m.homeScore;
+        const as = m.awayPenalty != null ? m.awayPenalty : m.awayScore;
+        if (hs > as) { homeClass = 'winner'; awayClass = 'loser-row'; }
+        else if (as > hs) { awayClass = 'winner'; homeClass = 'loser-row'; }
+    }
+
+    let dateStr = '';
+    if (m.date) {
+        try {
+            const d = new Date(m.date);
+            dateStr = d.toLocaleString('vi-VN', {
+                day: '2-digit', month: '2-digit', year: 'numeric',
+                hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Ho_Chi_Minh'
+            });
+        } catch (ex) {}
+    }
+
+    const homeScoreHTML = hasScore
+        ? '<span class="circ-popup-score">' + m.homeScore +
+          (m.homePenalty != null ? '<span class="circ-popup-pen">(' + m.homePenalty + ')</span>' : '') +
+          '</span>'
+        : '';
+    const awayScoreHTML = hasScore
+        ? '<span class="circ-popup-score">' + m.awayScore +
+          (m.awayPenalty != null ? '<span class="circ-popup-pen">(' + m.awayPenalty + ')</span>' : '') +
+          '</span>'
+        : '';
+
+    const popup = document.createElement('div');
+    popup.className = 'circ-popup';
+    popup.id = 'circPopup';
+    popup.innerHTML =
+        '<span class="circ-popup-close" onclick="closeCircPopup()">&#x2715;</span>' +
+        '<div class="circ-popup-title">M' + escHtml(String(m.num)) + ' &mdash; ' + escHtml(m.round || '') + '</div>' +
+        '<div>' +
+        '<div class="circ-popup-team ' + homeClass + '">' +
+        '<span>' + escHtml(m.homeFlag || '') + '</span>' +
+        '<span class="circ-popup-name">' + escHtml(m.home || 'TBD') + '</span>' +
+        homeScoreHTML +
+        '</div>' +
+        '<div class="circ-popup-team ' + awayClass + '">' +
+        '<span>' + escHtml(m.awayFlag || '') + '</span>' +
+        '<span class="circ-popup-name">' + escHtml(m.away || 'TBD') + '</span>' +
+        awayScoreHTML +
+        '</div>' +
+        '</div>' +
+        (!hasScore ? '<div class="circ-no-result">Chưa có kết quả</div>' : '') +
+        (dateStr ? '<div class="circ-popup-date">&#128197; ' + dateStr + '</div>' : '');
+
+    document.body.appendChild(popup);
+    circActivePopup = popup;
+
+    let x = e.clientX + 12, y = e.clientY + 12;
+    if (x + 290 > window.innerWidth) x = e.clientX - 290;
+    if (y + 220 > window.innerHeight) y = e.clientY - 220;
+    popup.style.left = x + 'px';
+    popup.style.top = y + 'px';
+}
+
+function closeCircPopup() {
+    if (circActivePopup) { circActivePopup.remove(); circActivePopup = null; }
+    const old = document.getElementById('circPopup');
+    if (old) old.remove();
+}
+
+function switchBracketTab(tab) {
+    document.querySelectorAll('.bracket-tab-btn').forEach(function(btn) {
+        btn.classList.toggle('active', btn.dataset.tab === tab);
+    });
+    document.querySelectorAll('.bracket-tab-pane').forEach(function(pane) {
+        pane.classList.toggle('active', pane.id === 'tab-' + tab);
+    });
+    if (tab === 'tron' && cachedData && cachedData.data && cachedData.data.bracket) {
+        drawCircularBracket(cachedData.data.bracket);
+    }
+}
+
+// ============================================
 // BRACKET CONNECTORS (SVG)
 // ============================================
 function buildConnectors(fromPositions, toPositions, totalH, side) {
@@ -1281,6 +1849,11 @@ function escHtml(str) {
 // ============================================
 // INIT
 // ============================================
+document.addEventListener('click', function(e) {
+    if (circActivePopup && !circActivePopup.contains(e.target)) {
+        closeCircPopup();
+    }
+});
 document.addEventListener('DOMContentLoaded', loadData);
 </script>
 
